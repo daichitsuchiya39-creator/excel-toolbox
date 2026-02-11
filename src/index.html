@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ExcelSheetPic</title>
+    <script type="module" src="/main.js" defer></script>
+  </head>
+
+  <body>
+    <main class="container">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Local Excel Utility</p>
+          <h1>ExcelSheetPic</h1>
+          <p class="subtitle">Excelのシート抽出を、ローカル完結で。</p>
+        </div>
+        <div class="hero-card">
+          <div class="card-row">
+            <span>処理方式</span>
+            <span class="badge">ローカルのみ</span>
+          </div>
+          <div class="card-row">
+            <span>対応形式</span>
+            <span>.xlsx</span>
+          </div>
+          <div class="card-row">
+            <span>出力</span>
+            <span>新しいExcel</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="panel">
+        <div class="section-header">
+          <h2>1. ファイルを選択</h2>
+          <p>Excelファイルを開いて、シート一覧を取得します。</p>
+        </div>
+        <div class="file-row">
+          <button id="select-file" class="btn primary">Excelファイルを選ぶ</button>
+          <div class="file-meta">
+            <div id="selected-file" class="file-name">未選択</div>
+            <div id="file-status" class="file-status">ファイルを選択してください</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-header">
+          <h2>2. 抽出方法</h2>
+          <p>キーワード検索か、シートを選択して抽出できます。</p>
+        </div>
+
+        <div class="mode-switch">
+          <label class="radio">
+            <input type="radio" name="mode" value="keyword" checked />
+            <span>キーワードで抽出</span>
+          </label>
+          <label class="radio">
+            <input type="radio" name="mode" value="selection" />
+            <span>シートを選択</span>
+          </label>
+        </div>
+
+        <div id="keyword-area" class="input-row">
+          <input id="keyword-input" type="text" placeholder="例: 2025_請求書" />
+          <span class="hint">シート名に含まれる文字で抽出します。</span>
+        </div>
+
+        <div id="selection-area" class="sheet-area hidden">
+          <div class="sheet-header">
+            <span>シート一覧</span>
+            <span id="sheet-count">0 件</span>
+          </div>
+          <div id="sheet-list" class="sheet-list"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-header">
+          <h2>3. 抽出を実行</h2>
+          <p>保存先を指定して新しいExcelを生成します。</p>
+        </div>
+        <div class="action-row">
+          <button id="run-extract" class="btn accent" disabled>抽出して保存</button>
+          <div id="result" class="result">準備中</div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
