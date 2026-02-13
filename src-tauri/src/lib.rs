@@ -1,12 +1,7 @@
 use std::collections::{HashMap, HashSet};
-use std::fs::File;
-use std::io::{Read, Write};
 use std::path::Path;
 
-use regex::Regex;
 use umya_spreadsheet::{reader::xlsx as xlsx_reader, writer::xlsx as xlsx_writer, Spreadsheet};
-use zip::write::FileOptions;
-use zip::{CompressionMethod, ZipArchive, ZipWriter};
 
 fn get_sheet_names(book: &Spreadsheet) -> Vec<String> {
     book.get_sheet_collection_no_check()
@@ -56,61 +51,6 @@ fn unique_sheet_name(base: &str, counts: &mut HashMap<String, usize>) -> String 
         counts.insert(name.clone(), 0);
     }
     name
-}
-
-fn normalize_content_types(xml: &str) -> String {
-    let mut updated = xml.replace(
-        "application/vnd.ms-excel.sheet.macroEnabled.main+xml",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml",
-    );
-    let vba_override_re = Regex::new(
-        r#"<Override[^>]*PartName="/xl/vbaProject[^"]*"[^>]*/>"#,
-    )
-    .unwrap();
-    updated = vba_override_re.replace_all(&updated, "").to_string();
-    updated
-}
-
-fn remove_vba_relationships(xml: &str) -> String {
-    let vba_rel_re =
-        Regex::new(r#"<Relationship[^>]*Type="[^"]*vbaProject[^"]*"[^>]*/>"#).unwrap();
-    vba_rel_re.replace_all(xml, "").to_string()
-}
-
-fn remove_macro_by_zip(input_path: &str, output_path: &str) -> Result<(), String> {
-    let input_file = File::open(input_path).map_err(|e| e.to_string())?;
-    let mut zip_in = ZipArchive::new(input_file).map_err(|e| e.to_string())?;
-    let output_file = File::create(output_path).map_err(|e| e.to_string())?;
-    let mut zip_out = ZipWriter::new(output_file);
-
-    for i in 0..zip_in.len() {
-        let mut file = zip_in.by_index(i).map_err(|e| e.to_string())?;
-        let name = file.name().to_string();
-
-        if name.starts_with("xl/vbaProject") {
-            continue;
-        }
-
-        let mut data = Vec::new();
-        file.read_to_end(&mut data).map_err(|e| e.to_string())?;
-
-        if name == "[Content_Types].xml" {
-            let xml = String::from_utf8(data).map_err(|e| e.to_string())?;
-            data = normalize_content_types(&xml).into_bytes();
-        } else if name == "xl/_rels/workbook.xml.rels" {
-            let xml = String::from_utf8(data).map_err(|e| e.to_string())?;
-            data = remove_vba_relationships(&xml).into_bytes();
-        }
-
-        let options = FileOptions::default().compression_method(CompressionMethod::Deflated);
-        zip_out
-            .start_file(name, options)
-            .map_err(|e| e.to_string())?;
-        zip_out.write_all(&data).map_err(|e| e.to_string())?;
-    }
-
-    zip_out.finish().map_err(|e| e.to_string())?;
-    Ok(())
 }
 
 fn write_selected_sheets(
@@ -214,7 +154,10 @@ fn merge_workbooks(paths: Vec<String>, output_path: String) -> Result<usize, Str
 
 #[tauri::command]
 fn remove_macro(path: String, output_path: String) -> Result<(), String> {
-    remove_macro_by_zip(&path, &output_path)
+    let mut book = xlsx_reader::read(&path).map_err(|e| e.to_string())?;
+    book.remove_macros_code();
+    xlsx_writer::write(&book, &output_path).map_err(|e| e.to_string())?;
+    Ok(())
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
