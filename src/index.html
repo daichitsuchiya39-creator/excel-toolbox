@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="styles.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ExcelSheetPic</title>
+    <title>Excel Toolbox</title>
     <script type="module" src="/main.js" defer></script>
   </head>
 
@@ -13,8 +13,9 @@
       <header class="hero">
         <div>
           <p class="eyebrow">Local Excel Utility</p>
-          <h1>ExcelSheetPic</h1>
-          <p class="subtitle">Excelのシート抽出を、ローカル完結で。</p>
+          <h1>Excel Toolbox</h1>
+          <p class="subtitle">Excelのシート抽出・統合・マクロ除去を、ローカル完結で。</p>
+          <p class="byline">made by chiapuru</p>
         </div>
         <div class="hero-card">
           <div class="card-row">
@@ -23,7 +24,7 @@
           </div>
           <div class="card-row">
             <span>対応形式</span>
-            <span>.xlsx</span>
+            <span>.xlsx / .xlsm</span>
           </div>
           <div class="card-row">
             <span>出力</span>
@@ -32,61 +33,140 @@
         </div>
       </header>
 
-      <section class="panel">
-        <div class="section-header">
-          <h2>1. ファイルを選択</h2>
-          <p>Excelファイルを開いて、シート一覧を取得します。</p>
-        </div>
-        <div class="file-row">
-          <button id="select-file" class="btn primary">Excelファイルを選ぶ</button>
-          <div class="file-meta">
-            <div id="selected-file" class="file-name">未選択</div>
-            <div id="file-status" class="file-status">ファイルを選択してください</div>
+      <div class="tool-tabs" role="tablist" aria-label="Excel toolbox tabs">
+        <button class="tool-tab is-active" data-tool="pick" role="tab" aria-selected="true">SheetPick</button>
+        <button class="tool-tab" data-tool="merge" role="tab" aria-selected="false">SheetMerge</button>
+        <button class="tool-tab" data-tool="macro" role="tab" aria-selected="false">MacroRemover</button>
+      </div>
+
+      <div class="tool-panels">
+        <div class="tool-panel is-active" data-tool-panel="pick" role="tabpanel">
+          <div class="tool-header">
+            <h2>SheetPick</h2>
+            <p>キーワード一致または選択したシートのみを抽出します。</p>
           </div>
-        </div>
-      </section>
 
-      <section class="panel">
-        <div class="section-header">
-          <h2>2. 抽出方法</h2>
-          <p>キーワード検索か、シートを選択して抽出できます。</p>
+          <section class="panel">
+            <div class="section-header">
+              <h2>1. ファイルを選択</h2>
+              <p>Excelファイルを開いて、シート一覧を取得します。</p>
+            </div>
+            <div class="file-row">
+              <button id="pick-select-file" class="btn primary">Excelファイルを選ぶ</button>
+              <div class="file-meta">
+                <div id="pick-selected-file" class="file-name">未選択</div>
+                <div id="pick-file-status" class="file-status">ファイルを選択してください</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="section-header">
+              <h2>2. 抽出方法</h2>
+              <p>キーワード検索か、シートを選択して抽出できます。</p>
+            </div>
+
+            <div class="mode-switch">
+              <label class="radio">
+                <input type="radio" name="mode" value="keyword" checked />
+                <span>キーワードで抽出</span>
+              </label>
+              <label class="radio">
+                <input type="radio" name="mode" value="selection" />
+                <span>シートを選択</span>
+              </label>
+            </div>
+
+            <div id="keyword-area" class="input-row">
+              <input id="keyword-input" type="text" placeholder="例: 2025_請求書" />
+              <span class="hint">シート名に含まれる文字で抽出します。</span>
+            </div>
+
+            <div id="selection-area" class="sheet-area hidden">
+              <div class="sheet-header">
+                <span>シート一覧</span>
+                <span id="sheet-count">0 件</span>
+              </div>
+              <div id="sheet-list" class="sheet-list"></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="section-header">
+              <h2>3. 抽出を実行</h2>
+              <p>保存先を指定して新しいExcelを生成します。</p>
+            </div>
+            <div class="action-row">
+              <button id="pick-run-extract" class="btn accent" disabled>抽出して保存</button>
+              <div id="pick-result" class="result">準備中</div>
+            </div>
+          </section>
         </div>
 
-        <div class="mode-switch">
-          <label class="radio">
-            <input type="radio" name="mode" value="keyword" checked />
-            <span>キーワードで抽出</span>
-          </label>
-          <label class="radio">
-            <input type="radio" name="mode" value="selection" />
-            <span>シートを選択</span>
-          </label>
-        </div>
-
-        <div id="keyword-area" class="input-row">
-          <input id="keyword-input" type="text" placeholder="例: 2025_請求書" />
-          <span class="hint">シート名に含まれる文字で抽出します。</span>
-        </div>
-
-        <div id="selection-area" class="sheet-area hidden">
-          <div class="sheet-header">
-            <span>シート一覧</span>
-            <span id="sheet-count">0 件</span>
+        <div class="tool-panel" data-tool-panel="merge" role="tabpanel">
+          <div class="tool-header">
+            <h2>SheetMerge</h2>
+            <p>複数のExcelファイルを1つに統合し、シート名の重複を避けます。</p>
           </div>
-          <div id="sheet-list" class="sheet-list"></div>
-        </div>
-      </section>
 
-      <section class="panel">
-        <div class="section-header">
-          <h2>3. 抽出を実行</h2>
-          <p>保存先を指定して新しいExcelを生成します。</p>
+          <section class="panel">
+            <div class="section-header">
+              <h2>1. ファイルを選択</h2>
+              <p>統合するExcelファイルを複数選択します。</p>
+            </div>
+            <div class="file-row">
+              <button id="merge-select-files" class="btn primary">Excelファイルを複数選ぶ</button>
+              <div class="file-meta">
+                <div id="merge-selected-files" class="file-name">未選択</div>
+                <div id="merge-file-status" class="file-status">2つ以上のファイルを選択してください</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="section-header">
+              <h2>2. 統合を実行</h2>
+              <p>保存先を指定して新しいExcelを生成します。</p>
+            </div>
+            <div class="action-row">
+              <button id="merge-run" class="btn accent" disabled>統合して保存</button>
+              <div id="merge-result" class="result">準備中</div>
+            </div>
+          </section>
         </div>
-        <div class="action-row">
-          <button id="run-extract" class="btn accent" disabled>抽出して保存</button>
-          <div id="result" class="result">準備中</div>
+
+        <div class="tool-panel" data-tool-panel="macro" role="tabpanel">
+          <div class="tool-header">
+            <h2>MacroRemover</h2>
+            <p>.xlsmからマクロを除去して.xlsxとして保存します。</p>
+          </div>
+
+          <section class="panel">
+            <div class="section-header">
+              <h2>1. ファイルを選択</h2>
+              <p>マクロ付きのExcelファイルを開きます。</p>
+            </div>
+            <div class="file-row">
+              <button id="macro-select-file" class="btn primary">.xlsmファイルを選ぶ</button>
+              <div class="file-meta">
+                <div id="macro-selected-file" class="file-name">未選択</div>
+                <div id="macro-file-status" class="file-status">.xlsmファイルを選択してください</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="section-header">
+              <h2>2. マクロ除去を実行</h2>
+              <p>保存先を指定して.xlsxとして保存します。</p>
+            </div>
+            <div class="action-row">
+              <button id="macro-run" class="btn accent" disabled>マクロ除去して保存</button>
+              <div id="macro-result" class="result">準備中</div>
+            </div>
+          </section>
         </div>
-      </section>
+      </div>
     </main>
   </body>
 </html>

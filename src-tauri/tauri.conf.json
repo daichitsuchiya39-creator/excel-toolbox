@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "ExcelSheetPic",
+  "productName": "Excel Toolbox",
   "version": "0.1.0",
-  "identifier": "com.chiapuru.excelsheetpic",
+  "identifier": "com.chiapuru.exceltoolbox",
   "build": {
     "frontendDist": "../src"
   },
@@ -10,7 +10,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "ExcelSheetPic",
+        "title": "Excel Toolbox",
         "width": 800,
         "height": 600
       }

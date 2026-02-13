@@ -52,6 +52,14 @@ h1 {
   font-size: 18px;
 }
 
+.byline {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: #7a8398;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .hero-card {
   background: #ffffff;
   border-radius: 20px;
@@ -84,6 +92,70 @@ h1 {
   padding: 24px;
   border: 1px solid #eaecf3;
   box-shadow: 0 16px 28px rgba(32, 45, 80, 0.06);
+}
+
+.tool-tabs {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: #ffffff;
+  border: 1px solid #e6e8f0;
+  border-radius: 999px;
+  padding: 6px;
+  box-shadow: 0 10px 18px rgba(28, 40, 70, 0.06);
+}
+
+.tool-tab {
+  border: none;
+  background: transparent;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4b5568;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.tool-tab:hover {
+  background: #f0f3ff;
+  color: #2f3b55;
+}
+
+.tool-tab.is-active {
+  background: #111827;
+  color: #ffffff;
+}
+
+.tool-panels {
+  display: grid;
+  gap: 24px;
+}
+
+.tool-panel {
+  display: none;
+  gap: 24px;
+}
+
+.tool-panel.is-active {
+  display: grid;
+}
+
+.tool-header {
+  display: grid;
+  gap: 6px;
+}
+
+.tool-header h2 {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: -0.01em;
+}
+
+.tool-header p {
+  margin: 0;
+  color: #5a6478;
+  font-size: 14px;
 }
 
 .section-header h2 {
