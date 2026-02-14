@@ -14,21 +14,21 @@
         <div>
           <p class="eyebrow">Local Excel Utility</p>
           <h1>Excel Toolbox</h1>
-          <p class="subtitle">Excelのシート抽出・統合・マクロ除去を、ローカル完結で。</p>
+          <p class="subtitle">Extract, merge, and remove macros from Excel sheets. 100% local.</p>
           <p class="byline">made by chiapuru</p>
         </div>
         <div class="hero-card">
           <div class="card-row">
-            <span>処理方式</span>
-            <span class="badge">ローカルのみ</span>
+            <span>Processing</span>
+            <span class="badge">Local Only</span>
           </div>
           <div class="card-row">
-            <span>対応形式</span>
+            <span>Formats</span>
             <span>.xlsx / .xlsm</span>
           </div>
           <div class="card-row">
-            <span>出力</span>
-            <span>新しいExcel</span>
+            <span>Output</span>
+            <span>New Excel File</span>
           </div>
         </div>
       </header>
@@ -43,49 +43,49 @@
         <div class="tool-panel is-active" data-tool-panel="pick" role="tabpanel">
           <div class="tool-header">
             <h2>SheetPick</h2>
-            <p>キーワード一致または選択したシートのみを抽出します。</p>
+            <p>Extract sheets by keyword match or manual selection.</p>
           </div>
 
           <section class="panel">
             <div class="section-header">
-              <h2>1. ファイルを選択</h2>
-              <p>Excelファイルを開いて、シート一覧を取得します。</p>
+              <h2>1. Select File</h2>
+              <p>Open an Excel file to load the sheet list.</p>
             </div>
             <div class="file-row">
-              <button id="pick-select-file" class="btn primary">Excelファイルを選ぶ</button>
+              <button id="pick-select-file" class="btn primary">Select Excel File</button>
               <div class="file-meta">
-                <div id="pick-selected-file" class="file-name">未選択</div>
-                <div id="pick-file-status" class="file-status">ファイルを選択してください</div>
+                <div id="pick-selected-file" class="file-name">Not Selected</div>
+                <div id="pick-file-status" class="file-status">Please select a file</div>
               </div>
             </div>
           </section>
 
           <section class="panel">
             <div class="section-header">
-              <h2>2. 抽出方法</h2>
-              <p>キーワード検索か、シートを選択して抽出できます。</p>
+              <h2>2. Extraction Method</h2>
+              <p>Extract by keyword search or manual sheet selection.</p>
             </div>
 
             <div class="mode-switch">
               <label class="radio">
                 <input type="radio" name="mode" value="keyword" checked />
-                <span>キーワードで抽出</span>
+                <span>Extract by Keyword</span>
               </label>
               <label class="radio">
                 <input type="radio" name="mode" value="selection" />
-                <span>シートを選択</span>
+                <span>Select Sheets</span>
               </label>
             </div>
 
             <div id="keyword-area" class="input-row">
-              <input id="keyword-input" type="text" placeholder="例: 2025_請求書" />
-              <span class="hint">シート名に含まれる文字で抽出します。</span>
+              <input id="keyword-input" type="text" placeholder="e.g., 2025_Invoice" />
+              <span class="hint">Extract sheets containing the specified text.</span>
             </div>
 
             <div id="selection-area" class="sheet-area hidden">
               <div class="sheet-header">
-                <span>シート一覧</span>
-                <span id="sheet-count">0 件</span>
+                <span>Sheet List</span>
+                <span id="sheet-count">0 sheets</span>
               </div>
               <div id="sheet-list" class="sheet-list"></div>
             </div>
@@ -93,12 +93,12 @@
 
           <section class="panel">
             <div class="section-header">
-              <h2>3. 抽出を実行</h2>
-              <p>保存先を指定して新しいExcelを生成します。</p>
+              <h2>3. Run Extraction</h2>
+              <p>Specify the save location and create a new Excel file.</p>
             </div>
             <div class="action-row">
-              <button id="pick-run-extract" class="btn accent" disabled>抽出して保存</button>
-              <div id="pick-result" class="result">準備中</div>
+              <button id="pick-run-extract" class="btn accent" disabled>Extract & Save</button>
+              <div id="pick-result" class="result">Preparing...</div>
             </div>
           </section>
         </div>
@@ -106,31 +106,31 @@
         <div class="tool-panel" data-tool-panel="merge" role="tabpanel">
           <div class="tool-header">
             <h2>SheetMerge</h2>
-            <p>複数のExcelファイルを1つに統合し、シート名の重複を避けます。</p>
+            <p>Merge multiple Excel files into one, avoiding duplicate sheet names.</p>
           </div>
 
           <section class="panel">
             <div class="section-header">
-              <h2>1. ファイルを選択</h2>
-              <p>統合するExcelファイルを複数選択します。</p>
+              <h2>1. Select Files</h2>
+              <p>Select multiple Excel files to merge.</p>
             </div>
             <div class="file-row">
-              <button id="merge-select-files" class="btn primary">Excelファイルを複数選ぶ</button>
+              <button id="merge-select-files" class="btn primary">Select Multiple Excel Files</button>
               <div class="file-meta">
-                <div id="merge-selected-files" class="file-name">未選択</div>
-                <div id="merge-file-status" class="file-status">2つ以上のファイルを選択してください</div>
+                <div id="merge-selected-files" class="file-name">Not Selected</div>
+                <div id="merge-file-status" class="file-status">Please select 2 or more files</div>
               </div>
             </div>
           </section>
 
           <section class="panel">
             <div class="section-header">
-              <h2>2. 統合を実行</h2>
-              <p>保存先を指定して新しいExcelを生成します。</p>
+              <h2>2. Run Merge</h2>
+              <p>Specify the save location and create a new Excel file.</p>
             </div>
             <div class="action-row">
-              <button id="merge-run" class="btn accent" disabled>統合して保存</button>
-              <div id="merge-result" class="result">準備中</div>
+              <button id="merge-run" class="btn accent" disabled>Merge & Save</button>
+              <div id="merge-result" class="result">Preparing...</div>
             </div>
           </section>
         </div>
@@ -138,31 +138,31 @@
         <div class="tool-panel" data-tool-panel="macro" role="tabpanel">
           <div class="tool-header">
             <h2>MacroRemover</h2>
-            <p>.xlsmからマクロを除去して.xlsxとして保存します。</p>
+            <p>Remove macros from .xlsm and save as .xlsx.</p>
           </div>
 
           <section class="panel">
             <div class="section-header">
-              <h2>1. ファイルを選択</h2>
-              <p>マクロ付きのExcelファイルを開きます。</p>
+              <h2>1. Select File</h2>
+              <p>Open an Excel file with macros.</p>
             </div>
             <div class="file-row">
-              <button id="macro-select-file" class="btn primary">.xlsmファイルを選ぶ</button>
+              <button id="macro-select-file" class="btn primary">Select .xlsm File</button>
               <div class="file-meta">
-                <div id="macro-selected-file" class="file-name">未選択</div>
-                <div id="macro-file-status" class="file-status">.xlsmファイルを選択してください</div>
+                <div id="macro-selected-file" class="file-name">Not Selected</div>
+                <div id="macro-file-status" class="file-status">Please select an .xlsm file</div>
               </div>
             </div>
           </section>
 
           <section class="panel">
             <div class="section-header">
-              <h2>2. マクロ除去を実行</h2>
-              <p>保存先を指定して.xlsxとして保存します。</p>
+              <h2>2. Run Macro Removal</h2>
+              <p>Specify the save location and save as .xlsx.</p>
             </div>
             <div class="action-row">
-              <button id="macro-run" class="btn accent" disabled>マクロ除去して保存</button>
-              <div id="macro-result" class="result">準備中</div>
+              <button id="macro-run" class="btn accent" disabled>Remove Macros & Save</button>
+              <div id="macro-result" class="result">Preparing...</div>
             </div>
           </section>
         </div>

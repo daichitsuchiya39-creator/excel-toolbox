@@ -68,7 +68,7 @@ fn write_selected_sheets(
         .collect();
 
     if selected_existing.is_empty() {
-        return Err("対象のシートが見つかりませんでした".to_string());
+        return Err("No matching sheets found".to_string());
     }
 
     for name in all_names {
@@ -97,7 +97,7 @@ fn extract_by_keyword(path: String, keyword: String, output_path: String) -> Res
         .collect();
 
     if selected.is_empty() {
-        return Err("該当するシートがありませんでした".to_string());
+        return Err("No sheets match the keyword".to_string());
     }
 
     write_selected_sheets(&path, &selected, &output_path)
@@ -110,7 +110,7 @@ fn extract_by_selection(
     output_path: String,
 ) -> Result<usize, String> {
     if sheets.is_empty() {
-        return Err("シートが選択されていません".to_string());
+        return Err("No sheets selected".to_string());
     }
 
     write_selected_sheets(&path, &sheets, &output_path)
@@ -119,7 +119,7 @@ fn extract_by_selection(
 #[tauri::command]
 fn merge_workbooks(paths: Vec<String>, output_path: String) -> Result<usize, String> {
     if paths.len() < 2 {
-        return Err("2つ以上のファイルを選択してください".to_string());
+        return Err("Please select 2 or more files".to_string());
     }
 
     let mut merged_book = umya_spreadsheet::new_file_empty_worksheet();
@@ -145,7 +145,7 @@ fn merge_workbooks(paths: Vec<String>, output_path: String) -> Result<usize, Str
     }
 
     if total_sheets == 0 {
-        return Err("マージ対象のシートが見つかりませんでした".to_string());
+        return Err("No sheets found to merge".to_string());
     }
 
     xlsx_writer::write(&merged_book, &output_path).map_err(|e| e.to_string())?;

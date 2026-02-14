@@ -23,51 +23,51 @@ function setStatus(element, message, tone = "muted") {
 
 function updatePickMeta() {
   if (!state.pick.filePath) {
-    ui.pickSelectedFile.textContent = "未選択";
-    ui.pickFileStatus.textContent = "ファイルを選択してください";
+    ui.pickSelectedFile.textContent = "Not Selected";
+    ui.pickFileStatus.textContent = "Please select a file";
     ui.pickRunExtract.disabled = true;
     return;
   }
   ui.pickSelectedFile.textContent = state.pick.filePath;
-  ui.pickFileStatus.textContent = "シート一覧を取得しました";
+  ui.pickFileStatus.textContent = "Sheet list loaded";
   ui.pickRunExtract.disabled = false;
 }
 
 function updateMergeMeta() {
   if (state.merge.paths.length < 2) {
-    ui.mergeSelectedFiles.textContent = "未選択";
-    ui.mergeFileStatus.textContent = "2つ以上のファイルを選択してください";
+    ui.mergeSelectedFiles.textContent = "Not Selected";
+    ui.mergeFileStatus.textContent = "Please select 2 or more files";
     ui.mergeRun.disabled = true;
     return;
   }
   const display = state.merge.paths.length <= 3
     ? state.merge.paths.join(", ")
-    : `${state.merge.paths.length} 件のファイルを選択`;
+    : `${state.merge.paths.length} files selected`;
   ui.mergeSelectedFiles.textContent = display;
-  ui.mergeFileStatus.textContent = "統合の準備ができました";
+  ui.mergeFileStatus.textContent = "Ready to merge";
   ui.mergeRun.disabled = false;
 }
 
 function updateMacroMeta() {
   if (!state.macro.filePath) {
-    ui.macroSelectedFile.textContent = "未選択";
-    ui.macroFileStatus.textContent = ".xlsmファイルを選択してください";
+    ui.macroSelectedFile.textContent = "Not Selected";
+    ui.macroFileStatus.textContent = "Please select an .xlsm file";
     ui.macroRun.disabled = true;
     return;
   }
   ui.macroSelectedFile.textContent = state.macro.filePath;
-  ui.macroFileStatus.textContent = "保存先を指定して実行できます";
+  ui.macroFileStatus.textContent = "Ready to remove macros";
   ui.macroRun.disabled = false;
 }
 
 function renderSheets() {
   ui.sheetList.innerHTML = "";
-  ui.sheetCount.textContent = `${state.pick.sheets.length} 件`;
+  ui.sheetCount.textContent = `${state.pick.sheets.length} sheets`;
 
   if (state.pick.sheets.length === 0) {
     const empty = document.createElement("div");
     empty.className = "sheet-empty";
-    empty.textContent = "シートが見つかりませんでした";
+    empty.textContent = "No sheets found";
     ui.sheetList.appendChild(empty);
     return;
   }
@@ -109,28 +109,28 @@ function setActiveTool(tool) {
 }
 
 async function handleSelectFile() {
-  setStatus(ui.pickResult, "ファイルを選択しています...", "muted");
+  setStatus(ui.pickResult, "Selecting file...", "muted");
   const filePath = await open({
     multiple: false,
     filters: [{ name: "Excel", extensions: ["xlsx", "xlsm"] }],
   });
 
   if (!filePath) {
-    setStatus(ui.pickResult, "ファイル選択をキャンセルしました。", "muted");
+    setStatus(ui.pickResult, "File selection cancelled.", "muted");
     return;
   }
 
   state.pick.filePath = filePath;
-  setStatus(ui.pickResult, "シートを読み込み中...", "muted");
+  setStatus(ui.pickResult, "Loading sheets...", "muted");
 
   try {
     const sheets = await invoke("load_sheets", { path: state.pick.filePath });
     state.pick.sheets = sheets;
     renderSheets();
     updatePickMeta();
-    setStatus(ui.pickResult, "準備完了。抽出方法を選んで実行できます。", "success");
+    setStatus(ui.pickResult, "Ready. Choose extraction method and run.", "success");
   } catch (error) {
-    setStatus(ui.pickResult, `エラー: ${error}`, "error");
+    setStatus(ui.pickResult, `Error: ${error}`, "error");
   }
 }
 
@@ -142,7 +142,7 @@ function getSelectedSheets() {
 
 async function handleExtract() {
   if (!state.pick.filePath) {
-    setStatus(ui.pickResult, "先にExcelファイルを選択してください。", "error");
+    setStatus(ui.pickResult, "Please select an Excel file first.", "error");
     return;
   }
 
@@ -152,8 +152,8 @@ async function handleExtract() {
 
   const defaultName =
     mode === "keyword"
-      ? `抽出_${ui.keywordInput.value || "keyword"}.xlsx`
-      : `抽出_${baseName}.xlsx`;
+      ? `extracted_${ui.keywordInput.value || "keyword"}.xlsx`
+      : `extracted_${baseName}.xlsx`;
 
   const outputPath = await save({
     defaultPath: defaultName,
@@ -161,18 +161,18 @@ async function handleExtract() {
   });
 
   if (!outputPath) {
-    setStatus(ui.pickResult, "保存先の指定をキャンセルしました。", "muted");
+    setStatus(ui.pickResult, "Save location cancelled.", "muted");
     return;
   }
 
-  setStatus(ui.pickResult, "抽出を実行中...", "muted");
+  setStatus(ui.pickResult, "Extracting...", "muted");
 
   try {
     let count = 0;
     if (mode === "keyword") {
       const keyword = ui.keywordInput.value.trim();
       if (!keyword) {
-        setStatus(ui.pickResult, "キーワードを入力してください。", "error");
+        setStatus(ui.pickResult, "Please enter a keyword.", "error");
         return;
       }
       count = await invoke("extract_by_keyword", {
@@ -183,7 +183,7 @@ async function handleExtract() {
     } else {
       const selected = getSelectedSheets();
       if (selected.length === 0) {
-        setStatus(ui.pickResult, "抽出するシートを選択してください。", "error");
+        setStatus(ui.pickResult, "Please select sheets to extract.", "error");
         return;
       }
       count = await invoke("extract_by_selection", {
@@ -193,46 +193,46 @@ async function handleExtract() {
       });
     }
 
-    setStatus(ui.pickResult, `完了: ${count} 件のシートを抽出しました。`, "success");
+    setStatus(ui.pickResult, `Complete: ${count} sheet(s) extracted.`, "success");
   } catch (error) {
-    setStatus(ui.pickResult, `エラー: ${error}`, "error");
+    setStatus(ui.pickResult, `Error: ${error}`, "error");
   }
 }
 
 async function handleMergeSelectFiles() {
-  setStatus(ui.mergeResult, "ファイルを選択しています...", "muted");
+  setStatus(ui.mergeResult, "Selecting files...", "muted");
   const paths = await open({
     multiple: true,
     filters: [{ name: "Excel", extensions: ["xlsx", "xlsm"] }],
   });
 
   if (!paths || paths.length === 0) {
-    setStatus(ui.mergeResult, "ファイル選択をキャンセルしました。", "muted");
+    setStatus(ui.mergeResult, "File selection cancelled.", "muted");
     return;
   }
 
   state.merge.paths = paths;
   updateMergeMeta();
-  setStatus(ui.mergeResult, "保存先を指定して統合できます。", "success");
+  setStatus(ui.mergeResult, "Ready to merge. Specify save location.", "success");
 }
 
 async function handleMergeRun() {
   if (state.merge.paths.length < 2) {
-    setStatus(ui.mergeResult, "2つ以上のファイルを選択してください。", "error");
+    setStatus(ui.mergeResult, "Please select 2 or more files.", "error");
     return;
   }
 
   const outputPath = await save({
-    defaultPath: "統合ファイル.xlsx",
+    defaultPath: "merged_file.xlsx",
     filters: [{ name: "Excel", extensions: ["xlsx"] }],
   });
 
   if (!outputPath) {
-    setStatus(ui.mergeResult, "保存先の指定をキャンセルしました。", "muted");
+    setStatus(ui.mergeResult, "Save location cancelled.", "muted");
     return;
   }
 
-  setStatus(ui.mergeResult, "統合を実行中...", "muted");
+  setStatus(ui.mergeResult, "Merging...", "muted");
 
   try {
     const totalSheets = await invoke("merge_workbooks", {
@@ -241,34 +241,34 @@ async function handleMergeRun() {
     });
     setStatus(
       ui.mergeResult,
-      `完了: ${totalSheets} 件のシートを統合しました。`,
+      `Complete: ${totalSheets} sheet(s) merged.`,
       "success"
     );
   } catch (error) {
-    setStatus(ui.mergeResult, `エラー: ${error}`, "error");
+    setStatus(ui.mergeResult, `Error: ${error}`, "error");
   }
 }
 
 async function handleMacroSelectFile() {
-  setStatus(ui.macroResult, "ファイルを選択しています...", "muted");
+  setStatus(ui.macroResult, "Selecting file...", "muted");
   const filePath = await open({
     multiple: false,
     filters: [{ name: "Excel Macro", extensions: ["xlsm"] }],
   });
 
   if (!filePath) {
-    setStatus(ui.macroResult, "ファイル選択をキャンセルしました。", "muted");
+    setStatus(ui.macroResult, "File selection cancelled.", "muted");
     return;
   }
 
   state.macro.filePath = filePath;
   updateMacroMeta();
-  setStatus(ui.macroResult, "保存先を指定して実行できます。", "success");
+  setStatus(ui.macroResult, "Ready. Specify save location and run.", "success");
 }
 
 async function handleMacroRun() {
   if (!state.macro.filePath) {
-    setStatus(ui.macroResult, ".xlsmファイルを選択してください。", "error");
+    setStatus(ui.macroResult, "Please select an .xlsm file.", "error");
     return;
   }
 
@@ -276,25 +276,25 @@ async function handleMacroRun() {
     state.macro.filePath.split(/[/\\\\]/).pop() || "macro.xlsm";
   const baseName = fileName.replace(/\.xlsm$/i, "");
   const outputPath = await save({
-    defaultPath: `${baseName}(マクロ除去済).xlsx`,
+    defaultPath: `${baseName}(macros_removed).xlsx`,
     filters: [{ name: "Excel", extensions: ["xlsx"] }],
   });
 
   if (!outputPath) {
-    setStatus(ui.macroResult, "保存先の指定をキャンセルしました。", "muted");
+    setStatus(ui.macroResult, "Save location cancelled.", "muted");
     return;
   }
 
-  setStatus(ui.macroResult, "マクロ除去を実行中...", "muted");
+  setStatus(ui.macroResult, "Removing macros...", "muted");
 
   try {
     await invoke("remove_macro", {
       path: state.macro.filePath,
       outputPath,
     });
-    setStatus(ui.macroResult, "完了: .xlsxとして保存しました。", "success");
+    setStatus(ui.macroResult, "Complete: Saved as .xlsx.", "success");
   } catch (error) {
-    setStatus(ui.macroResult, `エラー: ${error}`, "error");
+    setStatus(ui.macroResult, `Error: ${error}`, "error");
   }
 }
 
